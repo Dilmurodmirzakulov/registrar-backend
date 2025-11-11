@@ -15,3 +15,4 @@
 /Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Infrastructure/obj/Release/net9.0/WIUT.Registrar.Infrastructure.pdb
 /Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Infrastructure/obj/Release/net9.0/WIUT.Registrar.Infrastructure.genruntimeconfig.cache
 /Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Infrastructure/obj/Release/net9.0/ref/WIUT.Registrar.Infrastructure.dll
+/Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Infrastructure/obj/Release/net9.0/WIUT.Registrar.Infrastructure.sourcelink.json

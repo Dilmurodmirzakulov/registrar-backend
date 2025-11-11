@@ -9,3 +9,4 @@
 /Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Core/obj/Release/net9.0/refint/WIUT.Registrar.Core.dll
 /Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Core/obj/Release/net9.0/WIUT.Registrar.Core.pdb
 /Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Core/obj/Release/net9.0/ref/WIUT.Registrar.Core.dll
+/Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Core/obj/Release/net9.0/WIUT.Registrar.Core.sourcelink.json

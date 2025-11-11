@@ -211,3 +211,5 @@
 /Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Api/obj/Release/net9.0/WIUT.Registrar.Api.pdb
 /Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Api/obj/Release/net9.0/WIUT.Registrar.Api.genruntimeconfig.cache
 /Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Api/obj/Release/net9.0/ref/WIUT.Registrar.Api.dll
+/Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Api/bin/Release/net9.0/appsettings.Production.json
+/Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Api/obj/Release/net9.0/WIUT.Registrar.Api.sourcelink.json
