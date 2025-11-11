@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/WIUT.Registrar.Api.props" />
+</Project>
