@@ -14,6 +14,14 @@ public class AppDbContext : DbContext
     public DbSet<Page> Pages => Set<Page>();
     public DbSet<Document> Documents => Set<Document>();
     public DbSet<KPIReport> KPIReports => Set<KPIReport>();
+    public DbSet<ImportantDate> ImportantDates => Set<ImportantDate>();
+    public DbSet<PageAttachment> PageAttachments => Set<PageAttachment>();
+    public DbSet<SiteSetting> SiteSettings => Set<SiteSetting>();
+    public DbSet<QuickLink> QuickLinks => Set<QuickLink>();
+    public DbSet<Banner> Banners => Set<Banner>();
+    public DbSet<FAQ> FAQs => Set<FAQ>();
+    public DbSet<Statistic> Statistics => Set<Statistic>();
+    public DbSet<TextBlock> TextBlocks => Set<TextBlock>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -60,6 +68,45 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<TeamMember>().ToTable("TeamMembers", schema);
         modelBuilder.Entity<Document>().ToTable("DbDocuments", schema);
         modelBuilder.Entity<KPIReport>().ToTable("KPIReports", schema);
+        modelBuilder.Entity<ImportantDate>()
+            .ToTable("ImportantDates", schema)
+            .HasIndex(d => new { d.SectionKey, d.Date });
+
+        modelBuilder.Entity<PageAttachment>()
+            .ToTable("PageAttachments", schema)
+            .HasOne(pa => pa.Page)
+            .WithMany(p => p.Attachments)
+            .HasForeignKey(pa => pa.PageId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<SiteSetting>()
+            .ToTable("SiteSettings", schema)
+            .HasIndex(s => s.Key)
+            .IsUnique();
+
+        modelBuilder.Entity<QuickLink>()
+            .ToTable("QuickLinks", schema)
+            .HasIndex(q => q.DisplayOrder);
+
+        var bannerEntity = modelBuilder.Entity<Banner>()
+            .ToTable("Banners", schema);
+        bannerEntity.HasIndex(b => b.DisplayOrder);
+        bannerEntity.HasIndex(b => b.SectionKey);
+
+        modelBuilder.Entity<FAQ>()
+            .ToTable("FAQs", schema)
+            .HasIndex(f => f.DisplayOrder);
+
+        var statisticEntity = modelBuilder.Entity<Statistic>()
+            .ToTable("Statistics", schema);
+        statisticEntity.HasIndex(s => s.CardTitle);
+        statisticEntity.HasIndex(s => s.DisplayOrder);
+
+        var textBlockEntity = modelBuilder.Entity<TextBlock>()
+            .ToTable("TextBlocks", schema);
+        textBlockEntity.HasIndex(t => t.PageType);
+        textBlockEntity.HasIndex(t => t.SectionKey);
+        textBlockEntity.HasIndex(t => t.DisplayOrder);
     }
 }
 

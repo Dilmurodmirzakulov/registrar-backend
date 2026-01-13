@@ -14,6 +14,7 @@ public class Page : BaseEntity
     public required string Slug { get; set; }
     public PageType Type { get; set; }
     public string? BodyHtml { get; set; }
+    public ICollection<PageAttachment> Attachments { get; set; } = new List<PageAttachment>();
 }
 
 
