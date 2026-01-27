@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WIUT.Registrar.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c5c9d7ab50582f3974e45285c6bad17937b37869")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4f7d9d27084257ee19257794cbd6bdded43f8b39")]
 [assembly: System.Reflection.AssemblyProductAttribute("WIUT.Registrar.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WIUT.Registrar.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

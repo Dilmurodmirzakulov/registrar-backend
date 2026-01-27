@@ -46,7 +46,9 @@ builder.Services.AddCors(options =>
             .WithOrigins(
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
-                "https://registrar-front-wk3o.vercel.app")
+                "https://registrar-front-wk3o.vercel.app",
+                "https://registrar.wiut.uz",
+                "http://registrar.wiut.uz")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });

@@ -23,6 +23,53 @@ namespace WIUT.Registrar.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("WIUT.Registrar.Core.Entities.Banner", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LinkUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SectionKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("SectionKey");
+
+                    b.ToTable("Banners", "Registrar");
+                });
+
             modelBuilder.Entity("WIUT.Registrar.Core.Entities.Department", b =>
                 {
                     b.Property<int>("Id")
@@ -94,6 +141,44 @@ namespace WIUT.Registrar.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DbDocuments", "Registrar");
+                });
+
+            modelBuilder.Entity("WIUT.Registrar.Core.Entities.FAQ", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.ToTable("FAQs", "Registrar");
                 });
 
             modelBuilder.Entity("WIUT.Registrar.Core.Entities.ImportantDate", b =>
@@ -404,6 +489,50 @@ namespace WIUT.Registrar.Infrastructure.Migrations
                     b.ToTable("SiteSettings", "Registrar");
                 });
 
+            modelBuilder.Entity("WIUT.Registrar.Core.Entities.Statistic", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CardTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("StatName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StatValue")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CardTitle");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.ToTable("Statistics", "Registrar");
+                });
+
             modelBuilder.Entity("WIUT.Registrar.Core.Entities.TeamMember", b =>
                 {
                     b.Property<int>("Id")
@@ -452,6 +581,54 @@ namespace WIUT.Registrar.Infrastructure.Migrations
                     b.HasIndex("DepartmentId");
 
                     b.ToTable("TeamMembers", "Registrar");
+                });
+
+            modelBuilder.Entity("WIUT.Registrar.Core.Entities.TextBlock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CssClass")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("PageType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SectionKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.HasIndex("PageType");
+
+                    b.HasIndex("SectionKey");
+
+                    b.ToTable("TextBlocks", "Registrar");
                 });
 
             modelBuilder.Entity("WIUT.Registrar.Core.Entities.Department", b =>

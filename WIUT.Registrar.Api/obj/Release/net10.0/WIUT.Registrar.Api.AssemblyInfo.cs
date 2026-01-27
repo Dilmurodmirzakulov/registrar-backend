@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WIUT.Registrar.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+270a2051375472e22262b7880394799f4f52f378")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4f7d9d27084257ee19257794cbd6bdded43f8b39")]
 [assembly: System.Reflection.AssemblyProductAttribute("WIUT.Registrar.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WIUT.Registrar.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
