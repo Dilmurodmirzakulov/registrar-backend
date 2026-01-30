@@ -81,6 +81,10 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/uploads"
 });
 
+// Enable routing explicitly so CORS can run between routing and endpoints
+app.UseRouting();
+
+// Handle preflight requests for admin SPA calls
 app.UseCors("Default");
 
 app.MapGet("/api/health", () => Results.Ok(new { status = "ok", time = DateTime.UtcNow }))
