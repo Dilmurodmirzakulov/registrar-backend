@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace WIUT.Registrar.Api.Services;
 
@@ -7,21 +8,31 @@ public interface IFileStorage
     Task<(string fileUrl, long fileSize)> SaveAsync(IFormFile file, CancellationToken ct = default);
 }
 
+public class FileStorageOptions
+{
+    public required string RootPath { get; set; }
+}
+
 public class LocalFileStorage : IFileStorage
 {
     private readonly IWebHostEnvironment _env;
     private readonly ILogger<LocalFileStorage> _logger;
+    private readonly string _rootPath;
 
-    public LocalFileStorage(IWebHostEnvironment env, ILogger<LocalFileStorage> logger)
+    public LocalFileStorage(
+        IWebHostEnvironment env,
+        ILogger<LocalFileStorage> logger,
+        IOptions<FileStorageOptions> options)
     {
         _env = env;
         _logger = logger;
+        _rootPath = options.Value.RootPath;
     }
 
     public async Task<(string fileUrl, long fileSize)> SaveAsync(IFormFile file, CancellationToken ct = default)
     {
         var now = DateTime.UtcNow;
-        var uploadsRoot = Path.Combine(_env.ContentRootPath, "uploads", now.Year.ToString(), now.Month.ToString("D2"));
+        var uploadsRoot = Path.Combine(_rootPath, now.Year.ToString(), now.Month.ToString("D2"));
         Directory.CreateDirectory(uploadsRoot);
 
         var safeName = string.Concat(Path.GetFileNameWithoutExtension(file.FileName)

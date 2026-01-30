@@ -27,8 +27,9 @@ public class UploadController : ControllerBase
             return BadRequest(new { error = "Only image files are allowed" });
 
         var (url, size) = await _storage.SaveAsync(file, HttpContext.RequestAborted);
+        var absoluteUrl = ToAbsoluteUrl(url, Request);
         
-        return Ok(new { url, size, fileName = file.FileName, contentType = file.ContentType });
+        return Ok(new { url = absoluteUrl, size, fileName = file.FileName, contentType = file.ContentType });
     }
 
     [HttpPost("file")]
@@ -54,8 +55,21 @@ public class UploadController : ControllerBase
             return BadRequest(new { error = "Only PDF, Word, or image files are allowed" });
 
         var (url, size) = await _storage.SaveAsync(file, HttpContext.RequestAborted);
+        var absoluteUrl = ToAbsoluteUrl(url, Request);
 
-        return Ok(new { url, size, fileName = file.FileName, contentType = file.ContentType });
+        return Ok(new { url = absoluteUrl, size, fileName = file.FileName, contentType = file.ContentType });
+    }
+
+    private static string ToAbsoluteUrl(string relativePath, HttpRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(relativePath)) return relativePath;
+        if (relativePath.StartsWith("http", StringComparison.OrdinalIgnoreCase)) return relativePath;
+
+        var scheme = request.Scheme;
+        var host = request.Host.HasValue ? request.Host.Value : string.Empty;
+        return string.IsNullOrWhiteSpace(host)
+            ? relativePath
+            : $"{scheme}://{host}{relativePath}";
     }
 }
 

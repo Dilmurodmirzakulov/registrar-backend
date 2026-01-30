@@ -4,6 +4,7 @@ using Microsoft.Extensions.FileProviders;
 using Serilog;
 using WIUT.Registrar.Infrastructure;
 using WIUT.Registrar.Api.Services;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,6 +54,19 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod());
 });
 
+// Configure persistent uploads root (defaults to ../uploads-data relative to content root)
+var uploadsRoot = builder.Configuration.GetValue<string>("UploadsRoot");
+if (string.IsNullOrWhiteSpace(uploadsRoot))
+{
+    uploadsRoot = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "uploads-data"));
+}
+Directory.CreateDirectory(uploadsRoot);
+
+builder.Services.Configure<FileStorageOptions>(options =>
+{
+    options.RootPath = uploadsRoot;
+});
+
 builder.Services.AddSingleton<IFileStorage, LocalFileStorage>();
 
 var app = builder.Build();
@@ -73,11 +87,10 @@ if (!app.Environment.IsDevelopment())
 // Serve static files from wwwroot
 app.UseStaticFiles();
 
-// Serve static files from uploads directory
-var uploadsPath = Path.Combine(builder.Environment.ContentRootPath, "uploads");
+// Serve static files from uploads directory (outside app content root to survive redeploys)
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(uploadsPath),
+    FileProvider = new PhysicalFileProvider(uploadsRoot),
     RequestPath = "/uploads"
 });
 
