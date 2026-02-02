@@ -202,3 +202,4 @@
 /Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Api/obj/Debug/net10.0/WIUT.Registrar.Api.pdb
 /Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Api/obj/Debug/net10.0/WIUT.Registrar.Api.genruntimeconfig.cache
 /Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Api/obj/Debug/net10.0/ref/WIUT.Registrar.Api.dll
+/Users/wiut/Desktop/WIUT/Academic registrar office/WIUT.Registrar.Api/bin/Debug/net10.0/web.config
