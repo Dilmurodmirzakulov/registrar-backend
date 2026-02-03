@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WIUT.Registrar.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c70831b4018e55460b56dae962b2fa69a7225953")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+85d6745e10d8f6faf03144dc7f08d2639210e74c")]
 [assembly: System.Reflection.AssemblyProductAttribute("WIUT.Registrar.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WIUT.Registrar.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
