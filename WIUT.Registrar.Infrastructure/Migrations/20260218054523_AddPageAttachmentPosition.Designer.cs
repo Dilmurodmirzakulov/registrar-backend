@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WIUT.Registrar.Infrastructure;
 
@@ -11,9 +12,11 @@ using WIUT.Registrar.Infrastructure;
 namespace WIUT.Registrar.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260218054523_AddPageAttachmentPosition")]
+    partial class AddPageAttachmentPosition
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -149,9 +152,6 @@ namespace WIUT.Registrar.Infrastructure.Migrations
 
                     b.Property<bool>("IsPublished")
                         .HasColumnType("bit");
-
-                    b.Property<int>("Position")
-                        .HasColumnType("int");
 
                     b.Property<string>("ProgrammeCode")
                         .HasColumnType("nvarchar(max)");
@@ -577,9 +577,6 @@ namespace WIUT.Registrar.Infrastructure.Migrations
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
-                    b.Property<string>("DetailsHtml")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("int");
 
@@ -597,9 +594,6 @@ namespace WIUT.Registrar.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ManagerId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
@@ -615,8 +609,6 @@ namespace WIUT.Registrar.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DepartmentId");
-
-                    b.HasIndex("ManagerId");
 
                     b.ToTable("TeamMembers", "Registrar");
                 });
@@ -711,14 +703,7 @@ namespace WIUT.Registrar.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("DepartmentId");
 
-                    b.HasOne("WIUT.Registrar.Core.Entities.TeamMember", "Manager")
-                        .WithMany("DirectReports")
-                        .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.Navigation("Department");
-
-                    b.Navigation("Manager");
                 });
 
             modelBuilder.Entity("WIUT.Registrar.Core.Entities.Department", b =>
@@ -729,11 +714,6 @@ namespace WIUT.Registrar.Infrastructure.Migrations
             modelBuilder.Entity("WIUT.Registrar.Core.Entities.Page", b =>
                 {
                     b.Navigation("Attachments");
-                });
-
-            modelBuilder.Entity("WIUT.Registrar.Core.Entities.TeamMember", b =>
-                {
-                    b.Navigation("DirectReports");
                 });
 #pragma warning restore 612, 618
         }

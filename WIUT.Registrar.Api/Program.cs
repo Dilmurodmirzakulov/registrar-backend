@@ -56,9 +56,20 @@ builder.Services.AddCors(options =>
 
 // Configure persistent uploads root (defaults to ../uploads-data relative to content root)
 var uploadsRoot = builder.Configuration.GetValue<string>("UploadsRoot");
-if (string.IsNullOrWhiteSpace(uploadsRoot))
+
+var hasWindowsDrivePrefix = !string.IsNullOrWhiteSpace(uploadsRoot)
+    && uploadsRoot.Length >= 3
+    && char.IsLetter(uploadsRoot[0])
+    && uploadsRoot[1] == ':'
+    && (uploadsRoot[2] == '\\' || uploadsRoot[2] == '/');
+
+if (string.IsNullOrWhiteSpace(uploadsRoot) || (!OperatingSystem.IsWindows() && hasWindowsDrivePrefix))
 {
     uploadsRoot = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "uploads-data"));
+}
+else if (!Path.IsPathRooted(uploadsRoot))
+{
+    uploadsRoot = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, uploadsRoot));
 }
 Directory.CreateDirectory(uploadsRoot);
 
@@ -155,6 +166,21 @@ using (var scope = app.Services.CreateScope())
             ON PageAttachments (PageId);
             """);
 
+        EnsureSqliteTable(db, "PageTeamMembers",
+            """
+            CREATE TABLE IF NOT EXISTS PageTeamMembers (
+                PageId INTEGER NOT NULL,
+                TeamMemberId INTEGER NOT NULL,
+                PRIMARY KEY (PageId, TeamMemberId),
+                FOREIGN KEY (PageId) REFERENCES Pages(Id) ON DELETE CASCADE,
+                FOREIGN KEY (TeamMemberId) REFERENCES TeamMembers(Id) ON DELETE CASCADE
+            );
+            """,
+            """
+            CREATE INDEX IF NOT EXISTS IX_PageTeamMembers_TeamMemberId
+            ON PageTeamMembers (TeamMemberId);
+            """);
+
         EnsureSqliteTable(db, "SiteSettings",
             """
             CREATE TABLE IF NOT EXISTS SiteSettings (
@@ -218,6 +244,12 @@ using (var scope = app.Services.CreateScope())
 
         // Migrate existing Banners table to add SectionKey if missing
         EnsureSqliteColumn(db, "Banners", "SectionKey", "TEXT NOT NULL DEFAULT 'general'");
+        EnsureSqliteColumn(db, "Pages", "Position", "INTEGER NOT NULL DEFAULT 0");
+        EnsureSqliteColumn(db, "PageAttachments", "Position", "INTEGER NOT NULL DEFAULT 0");
+        EnsureSqliteColumn(db, "DbDocuments", "Position", "INTEGER NOT NULL DEFAULT 0");
+        EnsureSqliteColumn(db, "Documents", "Position", "INTEGER NOT NULL DEFAULT 0");
+        EnsureSqliteColumn(db, "TeamMembers", "ManagerId", "INTEGER NULL");
+        EnsureSqliteColumn(db, "TeamMembers", "DetailsHtml", "TEXT NULL");
 
         EnsureSqliteTable(db, "FAQs",
             """
@@ -318,6 +350,14 @@ static void EnsureSqliteColumn(AppDbContext db, string tableName, string columnN
     connection.Open();
     try
     {
+        using var tableCmd = connection.CreateCommand();
+        tableCmd.CommandText = $"SELECT 1 FROM sqlite_master WHERE type='table' AND name='{tableName}' LIMIT 1;";
+        var tableExists = tableCmd.ExecuteScalar() != null;
+        if (!tableExists)
+        {
+            return;
+        }
+
         // Check if column exists
         using var checkCmd = connection.CreateCommand();
         checkCmd.CommandText = $"PRAGMA table_info({tableName});";
@@ -336,9 +376,10 @@ static void EnsureSqliteColumn(AppDbContext db, string tableName, string columnN
         // Add column if it doesn't exist
         if (!columnExists)
         {
-            // Note: tableName, columnName, and columnDefinition are hardcoded values, not user input
-            // Using ExecuteSqlInterpolated with FormattableString to satisfy the analyzer
-            db.Database.ExecuteSqlInterpolated($"ALTER TABLE {tableName} ADD COLUMN {columnName} {columnDefinition};");
+            // Inputs are hardcoded at call sites; identifiers cannot be parameterized in SQLite DDL.
+#pragma warning disable EF1002
+            db.Database.ExecuteSqlRaw($"ALTER TABLE {tableName} ADD COLUMN {columnName} {columnDefinition};");
+#pragma warning restore EF1002
         }
     }
     finally

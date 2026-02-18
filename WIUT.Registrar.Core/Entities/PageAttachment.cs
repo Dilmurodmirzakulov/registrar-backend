@@ -5,6 +5,7 @@ namespace WIUT.Registrar.Core.Entities;
 public class PageAttachment : BaseEntity
 {
     public int PageId { get; set; }
+    public int Position { get; set; }
     public required string Title { get; set; }
     public string? Caption { get; set; }
     public required string FileUrl { get; set; }

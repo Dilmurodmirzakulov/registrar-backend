@@ -22,9 +22,9 @@ public class DocumentsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Document>>> Get(
         [FromQuery] DocumentCategory? category,
-        [FromQuery] string? userRole) // public, student, staff, registrar
+        [FromQuery] string? userRole) // student, staff, registrar
     {
-        var q = _db.Documents.AsNoTracking().Where(d => d.IsActive);
+        var q = _db.Documents.AsNoTracking();
         
         // Apply category filter
         if (category.HasValue) q = q.Where(d => d.Category == category.Value);
@@ -32,34 +32,37 @@ public class DocumentsController : ControllerBase
         // Apply visibility filter based on user role
         if (string.IsNullOrWhiteSpace(userRole) || userRole.Equals("public", StringComparison.OrdinalIgnoreCase))
         {
-            // Public users see only public documents
-            q = q.Where(d => d.Visibility == DocumentVisibility.Public);
+            // Public users do not have access to protected documents
+            q = q.Where(_ => false);
         }
         else if (userRole.Equals("student", StringComparison.OrdinalIgnoreCase))
         {
-            // Students see public and student-only documents
-            q = q.Where(d => d.Visibility == DocumentVisibility.Public || 
-                            d.Visibility == DocumentVisibility.StudentOnly);
+            // Students see student-only documents (and legacy public records mapped as protected)
+            q = q.Where(d => d.IsActive && (d.Visibility == DocumentVisibility.StudentOnly || (int)d.Visibility == 0));
         }
         else if (userRole.Equals("staff", StringComparison.OrdinalIgnoreCase))
         {
-            // Staff see public, student, and staff-only documents
-            q = q.Where(d => d.Visibility == DocumentVisibility.Public || 
+            // Staff see student and staff-only documents (and legacy public records mapped as protected)
+            q = q.Where(d => d.IsActive && (
+                            ((int)d.Visibility == 0) ||
                             d.Visibility == DocumentVisibility.StudentOnly ||
-                            d.Visibility == DocumentVisibility.StaffOnly);
+                            d.Visibility == DocumentVisibility.StaffOnly));
         }
         else if (userRole.Equals("registrar", StringComparison.OrdinalIgnoreCase))
         {
-            // Registrar/Admin see all documents
+            // Registrar/Admin see all documents including inactive (archived)
             // No additional filter needed
         }
         else
         {
-            // Unknown role - treat as public
-            q = q.Where(d => d.Visibility == DocumentVisibility.Public);
+            // Unknown role - no access
+            q = q.Where(_ => false);
         }
         
-        var items = await q.OrderByDescending(d => d.CreatedAt).ToListAsync();
+        var items = await q
+            .OrderBy(d => d.Position)
+            .ThenByDescending(d => d.CreatedAt)
+            .ToListAsync();
         return Ok(items);
     }
 
@@ -70,6 +73,7 @@ public class DocumentsController : ControllerBase
         [FromForm] DocumentCategory category, 
         [FromForm] int? year, 
         [FromForm] string? programmeCode,
+        [FromForm] int? position,
         [FromForm] DocumentVisibility? visibility,
         [FromForm] bool? isActive,
         [FromForm] string? description)
@@ -81,10 +85,11 @@ public class DocumentsController : ControllerBase
             FileName = file.FileName,
             FileUrl = url,
             FileSize = size,
+            Position = position ?? 0,
             Category = category,
             Year = year,
             ProgrammeCode = programmeCode,
-            Visibility = visibility ?? DocumentVisibility.Public,
+            Visibility = NormalizeVisibility(visibility),
             IsActive = isActive ?? true,
             Description = description,
             CreatedAt = DateTime.UtcNow,
@@ -108,20 +113,33 @@ public class DocumentsController : ControllerBase
         [FromForm] DocumentVisibility? visibility,
         [FromForm] bool? isActive,
         [FromForm] string? description,
-        [FromForm] string? fileName)
+        [FromForm] string? fileName,
+        [FromForm] int? position)
     {
         var doc = await _db.Documents.FindAsync(id);
         if (doc is null) return NotFound();
 
-        if (visibility.HasValue) doc.Visibility = visibility.Value;
+        if (visibility.HasValue) doc.Visibility = NormalizeVisibility(visibility);
         if (isActive.HasValue) doc.IsActive = isActive.Value;
         if (description != null) doc.Description = description;
         if (!string.IsNullOrWhiteSpace(fileName)) doc.FileName = fileName;
+        if (position.HasValue) doc.Position = position.Value;
         
         doc.UpdatedAt = DateTime.UtcNow;
         
         await _db.SaveChangesAsync();
         return NoContent();
+    }
+
+    private static DocumentVisibility NormalizeVisibility(DocumentVisibility? visibility)
+    {
+        var raw = (int)(visibility ?? DocumentVisibility.StudentOnly);
+        return raw switch
+        {
+            2 => DocumentVisibility.StaffOnly,
+            3 => DocumentVisibility.Restricted,
+            _ => DocumentVisibility.StudentOnly
+        };
     }
 
     [HttpDelete("{id:int}")]

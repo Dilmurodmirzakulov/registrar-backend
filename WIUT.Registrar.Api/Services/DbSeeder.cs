@@ -70,30 +70,57 @@ public static class DbSeeder
             }
         }
 
-        // Pages
-        if (!dbContext.Pages.Any())
+        // Pages (ensure defaults exist even if some pages were deleted manually)
+        var now = DateTime.UtcNow;
+        var defaultPages = new[]
         {
-            dbContext.Pages.AddRange([
-                new Page
-                {
-                    Title = "Academic Policies",
-                    Slug = "academic-policies",
-                    Type = PageType.Policies,
-                    BodyHtml = "<h2>Academic Integrity</h2><p>All students must adhere to academic integrity policies.</p>",
-                    CreatedAt = DateTime.UtcNow
-                },
-                new Page
-                {
-                    Title = "Student Records",
-                    Slug = "student-records",
-                    Type = PageType.Records,
-                    BodyHtml = "<p>Request transcripts and verify documents via the Registrar Office.</p>",
-                    CreatedAt = DateTime.UtcNow
-                }
-            ]);
-        }
+            new Page
+            {
+                Title = "Admissions & Recruitment",
+                Slug = "admissions",
+                Type = PageType.Admissions,
+                BodyHtml = "<p>Admissions requirements, deadlines, and application guidance.</p>",
+                CreatedAt = now
+            },
+            new Page
+            {
+                Title = "Compliance",
+                Slug = "compliance",
+                Type = PageType.Compliance,
+                BodyHtml = "<p>Compliance information and regulatory guidance.</p>",
+                CreatedAt = now
+            },
+            new Page
+            {
+                Title = "Academic Policies",
+                Slug = "academic-policies",
+                Type = PageType.Policies,
+                BodyHtml = "<h2>Academic Integrity</h2><p>All students must adhere to academic integrity policies.</p>",
+                CreatedAt = now
+            },
+            new Page
+            {
+                Title = "Student Records",
+                Slug = "student-records",
+                Type = PageType.Records,
+                BodyHtml = "<p>Request transcripts and verify documents via the Registrar Office.</p>",
+                CreatedAt = now
+            }
+        };
 
-        dbContext.SaveChanges();
+        var existingSlugs = dbContext.Pages
+            .Select(p => p.Slug)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var pagesToAdd = defaultPages
+            .Where(p => !existingSlugs.Contains(p.Slug))
+            .ToList();
+
+        if (pagesToAdd.Count > 0)
+        {
+            dbContext.Pages.AddRange(pagesToAdd);
+            dbContext.SaveChanges();
+        }
 
         // Site settings
         if (!dbContext.SiteSettings.Any())

@@ -24,10 +24,12 @@ public class PageAttachmentsController : ControllerBase
 
         var items = await _db.PageAttachments
             .Where(a => a.PageId == pageId)
-            .OrderByDescending(a => a.CreatedAt)
+            .OrderBy(a => a.Position)
+            .ThenByDescending(a => a.CreatedAt)
             .Select(a => new PageAttachmentResponse(
                 a.Id,
                 a.PageId,
+                a.Position,
                 a.Title,
                 a.Caption,
                 a.FileUrl,
@@ -43,6 +45,7 @@ public class PageAttachmentsController : ControllerBase
     }
 
     public record AttachmentDto(
+        int? Position,
         string Title,
         string? Caption,
         string FileUrl,
@@ -54,6 +57,7 @@ public class PageAttachmentsController : ControllerBase
     public record PageAttachmentResponse(
         int Id,
         int PageId,
+        int Position,
         string Title,
         string? Caption,
         string FileUrl,
@@ -73,6 +77,7 @@ public class PageAttachmentsController : ControllerBase
         var attachment = new PageAttachment
         {
             PageId = pageId,
+            Position = dto.Position ?? 0,
             Title = dto.Title,
             Caption = dto.Caption,
             FileUrl = dto.FileUrl,
@@ -90,6 +95,7 @@ public class PageAttachmentsController : ControllerBase
         var response = new PageAttachmentResponse(
             attachment.Id,
             attachment.PageId,
+            attachment.Position,
             attachment.Title,
             attachment.Caption,
             attachment.FileUrl,

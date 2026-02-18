@@ -1,3 +1,14 @@
 /frontend
 node_modules/
 package-lock.json
+publish/
+publish.zip
+publish*.zip
+
+# .NET build artifacts
+**/bin/
+**/obj/
+
+# Backend publish/runtime artifacts
+WIUT.Registrar.Api/wiut_registrar.db
+uploads-data/

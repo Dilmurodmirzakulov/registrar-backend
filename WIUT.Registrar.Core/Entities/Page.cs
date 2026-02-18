@@ -15,6 +15,7 @@ public class Page : BaseEntity
     public PageType Type { get; set; }
     public string? BodyHtml { get; set; }
     public ICollection<PageAttachment> Attachments { get; set; } = new List<PageAttachment>();
+    public ICollection<TeamMember> ResponsibleTeamMembers { get; set; } = new List<TeamMember>();
 }
 
 

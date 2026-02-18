@@ -10,7 +10,12 @@ public class TeamMember : BaseEntity
     public string? PhotoUrl { get; set; }
     public string? Email { get; set; }
     public string? Phone { get; set; }
+    public string? DetailsHtml { get; set; }
+    public int? ManagerId { get; set; }
+    public TeamMember? Manager { get; set; }
+    public ICollection<TeamMember> DirectReports { get; set; } = new List<TeamMember>();
     public int DisplayOrder { get; set; }
+    public ICollection<Page> ResponsiblePages { get; set; } = new List<Page>();
 }
 
 

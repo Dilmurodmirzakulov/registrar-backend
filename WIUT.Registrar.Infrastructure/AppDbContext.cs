@@ -58,6 +58,28 @@ public class AppDbContext : DbContext
             .HasIndex(p => p.Slug)
             .IsUnique();
 
+        modelBuilder.Entity<Page>()
+            .HasMany(p => p.ResponsibleTeamMembers)
+            .WithMany(t => t.ResponsiblePages)
+            .UsingEntity<Dictionary<string, object>>(
+                "PageTeamMember",
+                join => join
+                    .HasOne<TeamMember>()
+                    .WithMany()
+                    .HasForeignKey("TeamMemberId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                join => join
+                    .HasOne<Page>()
+                    .WithMany()
+                    .HasForeignKey("PageId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                join =>
+                {
+                    join.ToTable("PageTeamMembers", schema);
+                    join.HasKey("PageId", "TeamMemberId");
+                    join.HasIndex("TeamMemberId");
+                });
+
         modelBuilder.Entity<Department>()
             .ToTable("Departments", schema)
             .HasOne(d => d.ParentDepartment)
@@ -65,7 +87,13 @@ public class AppDbContext : DbContext
             .HasForeignKey(d => d.ParentDepartmentId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<TeamMember>().ToTable("TeamMembers", schema);
+        modelBuilder.Entity<TeamMember>()
+            .ToTable("TeamMembers", schema)
+            .HasOne(t => t.Manager)
+            .WithMany(t => t.DirectReports)
+            .HasForeignKey(t => t.ManagerId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         modelBuilder.Entity<Document>().ToTable("DbDocuments", schema);
         modelBuilder.Entity<KPIReport>().ToTable("KPIReports", schema);
         modelBuilder.Entity<ImportantDate>()
